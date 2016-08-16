@@ -1,0 +1,76 @@
+@Service
+public class ReCaptchaResponseVerfier {
+
+  @Resource
+  private Environment environment;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ReCaptchaResponseVerfier.class);
+
+  @Async
+  public ListenableFuture<GoogleCaptchaResponseData> isCaptchaResponseValid(String captchaResponse) throws InterruptedException,
+      ExecutionException {
+
+    LOGGER.debug(" Validating captcha {}", captchaResponse);
+
+    if (captchaResponse.isEmpty()) {
+      GoogleCaptchaResponseData response = new GoogleCaptchaResponseData();
+      response.setSuccess(false);
+      response.setErrorCodes("The \"I am not a robot\" genie says you didn't verify, please do so.");
+      return new AsyncResult<GoogleCaptchaResponseData>(response);
+    }
+
+    AsyncRestTemplate restTemplate = new AsyncRestTemplate();
+
+    StringBuilder builder = new StringBuilder("https://www.google.com/recaptcha/api/siteverify?");
+    builder.append("secret=").append(environment.getProperty("google.recaptcha.secret")).append("&response=")
+        .append(captchaResponse);
+
+    ListenableFuture<ResponseEntity<GoogleCaptchaResponseData>> futureResponse = restTemplate.exchange(builder
+        .toString().trim(), HttpMethod.GET, null, GoogleCaptchaResponseData.class);
+
+    GoogleCaptchaResponseData response;
+    response = futureResponse.get().getBody();
+
+    return new AsyncResult<GoogleCaptchaResponseData>(response);
+
+  }
+
+}
+
+@JsonFormat
+public class GoogleCaptchaResponseData implements Serializable {
+
+  private static final long serialVersionUID = 5059754043870680072L;
+
+  private boolean success;
+
+  private String errorCodes;
+
+  public boolean isSuccess() {
+    return success;
+  }
+
+  public void setSuccess(boolean success) {
+    this.success = success;
+  }
+
+  public String getErrorCodes() {
+    return errorCodes;
+  }
+
+  public void setErrorCodes(String errorCodes) {
+    this.errorCodes = errorCodes;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("GoogleCaptchResponse [success=");
+    builder.append(success);
+    builder.append(", errorCodes=");
+    builder.append(errorCodes);
+    builder.append("]");
+    return builder.toString();
+  }
+
+}
