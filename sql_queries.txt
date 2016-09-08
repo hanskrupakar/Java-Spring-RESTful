@@ -1,9 +1,9 @@
-create database hcl;
-use hcl
+create database db;
+use db
 create table users(username varchar(50) primary key not null,password varchar(100),enabled int default 1);
 /* TABLE TO STORE USERNAME AND PASSWORD */
 
-insert into users values('user1','hcl',1);
+insert into users values('user1','db',1);
 insert into users values('user2','hans',1);
 insert into users values('SuperUser','pass',1);
 
