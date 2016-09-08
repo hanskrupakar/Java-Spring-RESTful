@@ -3,7 +3,6 @@ use db
 create table users(username varchar(50) primary key not null,password varchar(100),enabled int default 1);
 /* TABLE TO STORE USERNAME AND PASSWORD */
 
-insert into users values('user1','db',1);
 insert into users values('user2','hans',1);
 insert into users values('SuperUser','pass',1);
 
@@ -18,7 +17,6 @@ alter table users modify column password varchar(60);
 /* BCRYPT ENCRYPTION ALLOWS 60 CHARACTER HASHES FOR ALL PASSWORD INPUTS */
 
 update users set password='$2a$05$UIsTGemq7RUJ4RXLiKr3veiHCvPbrGxVVLhgFsclBNuciqRq/kJf6' where username='user2';
-update users set password='$2a$05$quUjnARrsJigHVk4/lCDg.bu.zNkTCmHR4dENjoJ5NEG9O4UXJdni' where username='user1';
 update users set password='$2a$05$T7Pys4fd7P7QgjT1s07WFOm3cc5oC4DHqXFxbJycC99O8/r9nFzQy' where username='user3';
 /* BCRYPT ENCRYPTION FOUND USING PASSWORD ENCRYPTION JAR */
 
